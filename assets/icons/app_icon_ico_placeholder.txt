@@ -1,0 +1,5 @@
+# This is a placeholder file for the app icon
+# Replace this with your actual app_icon.ico file
+# You can use the app_icon.svg file to generate this using online converters
+# Should contain multiple sizes: 16x16, 32x32, 48x48, 64x64, 128x128, 256x256
+# Format: ICO (Windows Icon format)

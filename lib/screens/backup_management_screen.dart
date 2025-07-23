@@ -11,39 +11,11 @@ class BackupManagementScreen extends StatefulWidget {
 }
 
 class _BackupManagementScreenState extends State<BackupManagementScreen> {
-  List<BackupInfo> _automaticBackups = [];
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    _loadAutomaticBackups();
-  }
-
-  Future<void> _loadAutomaticBackups() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final backups = await BackupService.getAutomaticBackups();
-      setState(() {
-        _automaticBackups = backups;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error loading backups: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
   }
 
   Future<void> _createAndExportBackup() async {
@@ -121,9 +93,6 @@ class _BackupManagementScreenState extends State<BackupManagementScreen> {
               backgroundColor: Colors.green,
             ),
           );
-
-          // Refresh automatic backups list
-          _loadAutomaticBackups();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -141,99 +110,6 @@ class _BackupManagementScreenState extends State<BackupManagementScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error restoring backup: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-  }
-
-  Future<void> _restoreFromAutomaticBackup(BackupInfo backup) async {
-    // Show confirmation dialog
-    final confirmed = await _showRestoreConfirmationDialog();
-    if (!confirmed) return;
-
-    try {
-      setState(() {
-        _isLoading = true;
-      });
-
-      await BackupService.restoreFromFile(backup.filePath);
-
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-
-        // Reload data in provider
-        final provider = Provider.of<TailorShopProvider>(
-          context,
-          listen: false,
-        );
-        await provider.loadData();
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Backup restored successfully!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error restoring backup: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-  }
-
-  Future<void> _deleteBackup(BackupInfo backup) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Delete Backup'),
-            content: Text(
-              'Are you sure you want to delete the backup from ${backup.formattedDate}?',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('Cancel'),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context, true),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                ),
-                child: const Text('Delete'),
-              ),
-            ],
-          ),
-    );
-
-    if (confirmed == true) {
-      try {
-        await BackupService.deleteBackup(backup.filePath);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Backup deleted successfully'),
-            backgroundColor: Colors.green,
-          ),
-        );
-        _loadAutomaticBackups();
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error deleting backup: ${e.toString()}'),
             backgroundColor: Colors.red,
           ),
         );
@@ -269,43 +145,6 @@ class _BackupManagementScreenState extends State<BackupManagementScreen> {
         false;
   }
 
-  Future<void> _createAutomaticBackup() async {
-    try {
-      setState(() {
-        _isLoading = true;
-      });
-
-      await BackupService.createAutomaticBackup();
-
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Automatic backup created successfully!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-
-        _loadAutomaticBackups();
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error creating automatic backup: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -328,7 +167,7 @@ class _BackupManagementScreenState extends State<BackupManagementScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Quick Actions Section
+                    // Backup Actions Section
                     Card(
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -336,8 +175,14 @@ class _BackupManagementScreenState extends State<BackupManagementScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Quick Actions',
+                              'Backup & Restore',
                               style: Theme.of(context).textTheme.headlineSmall,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Export your data to create a backup or import from an existing backup file.',
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(color: Colors.grey[600]),
                             ),
                             const SizedBox(height: 16),
                             Row(
@@ -345,15 +190,19 @@ class _BackupManagementScreenState extends State<BackupManagementScreen> {
                                 Expanded(
                                   child: ElevatedButton.icon(
                                     onPressed: _createAndExportBackup,
-                                    icon: const Icon(Icons.file_download),
+                                    icon: const Icon(Icons.save_alt),
                                     label: const Text('Export Backup'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFF2E7D32),
+                                      foregroundColor: Colors.white,
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(width: 16),
                                 Expanded(
                                   child: ElevatedButton.icon(
                                     onPressed: _importBackup,
-                                    icon: const Icon(Icons.file_upload),
+                                    icon: const Icon(Icons.restore),
                                     label: const Text('Import Backup'),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.orange,
@@ -363,133 +212,78 @@ class _BackupManagementScreenState extends State<BackupManagementScreen> {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 12),
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton.icon(
-                                onPressed: _createAutomaticBackup,
-                                icon: const Icon(Icons.backup),
-                                label: const Text('Create Manual Backup'),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF2E7D32),
-                                  foregroundColor: Colors.white,
-                                ),
-                              ),
-                            ),
                           ],
                         ),
                       ),
                     ),
                     const SizedBox(height: 24),
 
-                    // Automatic Backups Section
-                    Text(
-                      'Automatic Backups',
-                      style: Theme.of(context).textTheme.headlineSmall,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'These backups are created automatically and stored locally.',
-                      style: Theme.of(
-                        context,
-                      ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
-                    ),
-                    const SizedBox(height: 16),
-
-                    if (_automaticBackups.isEmpty)
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(32.0),
-                          child: Center(
-                            child: Column(
+                    // Information Section
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
                               children: [
                                 Icon(
-                                  Icons.backup_outlined,
-                                  size: 64,
-                                  color: Colors.grey[400],
+                                  Icons.info_outline,
+                                  color: Colors.blue[700],
                                 ),
-                                const SizedBox(height: 16),
+                                const SizedBox(width: 8),
                                 Text(
-                                  'No automatic backups found',
-                                  style:
-                                      Theme.of(context).textTheme.titleMedium,
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'Create your first backup using the button above',
-                                  style: TextStyle(color: Colors.grey[600]),
+                                  'About Backups',
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.titleMedium?.copyWith(
+                                    color: Colors.blue[700],
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ],
                             ),
-                          ),
-                        ),
-                      )
-                    else
-                      ...(_automaticBackups
-                          .map(
-                            (backup) => Card(
-                              margin: const EdgeInsets.only(bottom: 8),
-                              child: ListTile(
-                                leading: Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: Colors.blue[50],
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Icon(
-                                    Icons.backup,
-                                    color: Colors.blue[700],
-                                  ),
-                                ),
-                                title: Text(backup.formattedDate),
-                                subtitle: Text('Size: ${backup.formattedSize}'),
-                                trailing: PopupMenuButton(
-                                  itemBuilder:
-                                      (context) => [
-                                        const PopupMenuItem(
-                                          value: 'restore',
-                                          child: Row(
-                                            children: [
-                                              Icon(Icons.restore),
-                                              SizedBox(width: 8),
-                                              Text('Restore'),
-                                            ],
-                                          ),
-                                        ),
-                                        const PopupMenuItem(
-                                          value: 'delete',
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                Icons.delete,
-                                                color: Colors.red,
-                                              ),
-                                              SizedBox(width: 8),
-                                              Text(
-                                                'Delete',
-                                                style: TextStyle(
-                                                  color: Colors.red,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                  onSelected: (value) {
-                                    if (value == 'restore') {
-                                      _restoreFromAutomaticBackup(backup);
-                                    } else if (value == 'delete') {
-                                      _deleteBackup(backup);
-                                    }
-                                  },
-                                ),
-                              ),
+                            const SizedBox(height: 12),
+                            _buildInfoItem(
+                              Icons.save_alt,
+                              'Export Backup',
+                              'Create a backup file with all your customers, garment types, and orders data.',
                             ),
-                          )
-                          .toList()),
+                            const SizedBox(height: 8),
+                            _buildInfoItem(
+                              Icons.restore,
+                              'Import Backup',
+                              'Restore data from a previously created backup file. This will replace all current data.',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
+    );
+  }
+
+  Widget _buildInfoItem(IconData icon, String title, String description) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 20, color: Colors.grey[600]),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
+              Text(
+                description,
+                style: TextStyle(color: Colors.grey[600], fontSize: 13),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

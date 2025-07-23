@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="128" cy="128" r="120" fill="#2E7D32" stroke="#1B5E20" stroke-width="4"/>
+  
+  <!-- Inner Circle -->
+  <circle cx="128" cy="128" r="100" fill="#388E3C" opacity="0.8"/>
+  
+  <!-- Scissors -->
+  <g transform="translate(128, 128)">
+    <!-- Left Blade -->
+    <ellipse cx="-25" cy="-15" rx="8" ry="25" fill="#E0E0E0" transform="rotate(-20)"/>
+    <ellipse cx="-25" cy="-15" rx="6" ry="20" fill="#FFFFFF" transform="rotate(-20)"/>
+    
+    <!-- Right Blade -->
+    <ellipse cx="25" cy="-15" rx="8" ry="25" fill="#E0E0E0" transform="rotate(20)"/>
+    <ellipse cx="25" cy="-15" rx="6" ry="20" fill="#FFFFFF" transform="rotate(20)"/>
+    
+    <!-- Center Screw -->
+    <circle cx="0" cy="0" r="6" fill="#757575"/>
+    <circle cx="0" cy="0" r="3" fill="#BDBDBD"/>
+    
+    <!-- Left Handle -->
+    <circle cx="-25" cy="15" r="12" fill="#2E7D32" stroke="#1B5E20" stroke-width="2"/>
+    <circle cx="-25" cy="15" r="8" fill="#4CAF50"/>
+    
+    <!-- Right Handle -->
+    <circle cx="25" cy="15" r="12" fill="#2E7D32" stroke="#1B5E20" stroke-width="2"/>
+    <circle cx="25" cy="15" r="8" fill="#4CAF50"/>
+  </g>
+  
+  <!-- Needle and Thread -->
+  <g transform="translate(128, 180)">
+    <!-- Thread -->
+    <path d="M -30 -20 Q -20 -30 -10 -25 Q 0 -20 10 -25 Q 20 -30 30 -20" 
+          stroke="#FF5722" stroke-width="2" fill="none"/>
+    
+    <!-- Needle -->
+    <rect x="-1" y="-35" width="2" height="20" fill="#757575"/>
+    <circle cx="0" cy="-35" r="2" fill="#757575"/>
+  </g>
+  
+  <!-- Small decorative elements -->
+  <circle cx="80" cy="80" r="3" fill="#4CAF50" opacity="0.6"/>
+  <circle cx="176" cy="80" r="3" fill="#4CAF50" opacity="0.6"/>
+  <circle cx="80" cy="176" r="3" fill="#4CAF50" opacity="0.6"/>
+  <circle cx="176" cy="176" r="3" fill="#4CAF50" opacity="0.6"/>
+</svg>

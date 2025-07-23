@@ -3,7 +3,6 @@ import '../models/customer.dart';
 import '../models/garment_type.dart';
 import '../models/order.dart';
 import '../services/database_service.dart';
-import '../services/backup_service.dart';
 
 class TailorShopProvider with ChangeNotifier {
   List<Customer> _customers = [];
@@ -26,21 +25,18 @@ class TailorShopProvider with ChangeNotifier {
     await DatabaseService.addCustomer(customer);
     _customers = DatabaseService.getAllCustomers();
     notifyListeners();
-    _createBackupIfNeeded();
   }
 
   Future<void> updateCustomer(Customer customer) async {
     await DatabaseService.updateCustomer(customer);
     _customers = DatabaseService.getAllCustomers();
     notifyListeners();
-    _createBackupIfNeeded();
   }
 
   Future<void> deleteCustomer(String customerId) async {
     await DatabaseService.deleteCustomer(customerId);
     _customers = DatabaseService.getAllCustomers();
     notifyListeners();
-    _createBackupIfNeeded();
   }
 
   List<Customer> searchCustomers(String query) {
@@ -57,21 +53,18 @@ class TailorShopProvider with ChangeNotifier {
     await DatabaseService.addGarmentType(garmentType);
     _garmentTypes = DatabaseService.getAllGarmentTypes();
     notifyListeners();
-    _createBackupIfNeeded();
   }
 
   Future<void> updateGarmentType(GarmentType garmentType) async {
     await DatabaseService.updateGarmentType(garmentType);
     _garmentTypes = DatabaseService.getAllGarmentTypes();
     notifyListeners();
-    _createBackupIfNeeded();
   }
 
   Future<void> deleteGarmentType(String garmentTypeId) async {
     await DatabaseService.deleteGarmentType(garmentTypeId);
     _garmentTypes = DatabaseService.getAllGarmentTypes();
     notifyListeners();
-    _createBackupIfNeeded();
   }
 
   GarmentType? getGarmentTypeById(String id) {
@@ -83,21 +76,18 @@ class TailorShopProvider with ChangeNotifier {
     await DatabaseService.addOrder(order);
     _orders = DatabaseService.getAllOrders();
     notifyListeners();
-    _createBackupIfNeeded();
   }
 
   Future<void> updateOrder(Order order) async {
     await DatabaseService.updateOrder(order);
     _orders = DatabaseService.getAllOrders();
     notifyListeners();
-    _createBackupIfNeeded();
   }
 
   Future<void> deleteOrder(String orderId) async {
     await DatabaseService.deleteOrder(orderId);
     _orders = DatabaseService.getAllOrders();
     notifyListeners();
-    _createBackupIfNeeded();
   }
 
   List<Order> searchOrdersByInvoice(String invoiceNumber) {
@@ -176,18 +166,5 @@ class TailorShopProvider with ChangeNotifier {
     });
 
     return deliveriesToShow.take(15).toList(); // Show up to 15 deliveries
-  }
-
-  // Private method to create automatic backups after significant operations
-  void _createBackupIfNeeded() {
-    // Create backup asynchronously without blocking UI
-    Future.microtask(() async {
-      try {
-        await BackupService.createAutomaticBackup();
-      } catch (e) {
-        // Silently fail backup creation to not disrupt user workflow
-        debugPrint('Auto backup failed: $e');
-      }
-    });
   }
 }

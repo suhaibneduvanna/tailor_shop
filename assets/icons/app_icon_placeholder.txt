@@ -1,0 +1,5 @@
+# This is a placeholder file for the app icon
+# Replace this with your actual app_icon.png file (256x256 pixels)
+# You can use the app_icon.svg file to generate this using online converters
+# Recommended size: 256x256 pixels
+# Format: PNG with transparency support
