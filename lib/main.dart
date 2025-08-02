@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => TailorShopProvider()..loadData(),
       child: MaterialApp(
-        title: 'Libasu Thaqwa',
+        title: 'Libasu Thaqva',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
             seedColor: const Color(0xFF2E7D32), // Rich green

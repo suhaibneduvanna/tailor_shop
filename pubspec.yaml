@@ -1,5 +1,5 @@
 name: tailor_shop
-description: "Tailor shop management system"
+description: "Libasu Thaqva - Tailoring & Cutpiece Center"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -120,12 +120,12 @@ flutter:
 
 # MSIX configuration for Windows installer
 msix_config:
-  display_name: Tailor Shop Management
-  publisher_display_name: Your Business Name
-  identity_name: com.yourcompany.tailorshop
+  display_name: Libasu Thaqva
+  publisher_display_name: Libasu Thaqva
+  identity_name: com.libasuthaqva.tailorshop
   msix_version: 1.0.0.0
-  description: Professional tailor shop management system for tracking customers, orders, and inventory
-  publisher: CN=YourCompany
+  description: Libasu Thaqva - Professional tailoring and cutpiece center management system
+  publisher: CN=LibasuThaqva
   logo_path: assets/icons/app_icon.png
   start_menu_icon_path: assets/icons/app_icon.png
   tile_icon_path: assets/icons/app_icon.png

@@ -1,11 +1,11 @@
 {
-    "name": "tailor_shop",
-    "short_name": "tailor_shop",
+    "name": "Libasu Thaqva",
+    "short_name": "Libasu Thaqva",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#hexcode",
     "theme_color": "#hexcode",
-    "description": "Tailor shop management system",
+    "description": "Libasu Thaqva - Tailoring & Cutpiece Center",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
