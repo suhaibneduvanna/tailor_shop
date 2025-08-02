@@ -289,187 +289,50 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                 const SizedBox(height: 16),
                                 Row(
                                   children: [
-                                    // Print Invoice Dropdown
-                                    PopupMenuButton<String>(
-                                      onSelected: (value) {
-                                        if (value == 'regular') {
-                                          _printInvoice(
+                                    // Print Invoice Button
+                                    ElevatedButton.icon(
+                                      onPressed:
+                                          () => _printInvoice(
                                             order,
                                             customer,
                                             garmentType,
-                                          );
-                                        } else if (value == 'thermal') {
-                                          _printThermalInvoice(
-                                            order,
-                                            customer,
-                                            garmentType,
-                                          );
-                                        }
-                                      },
-                                      itemBuilder:
-                                          (context) => [
-                                            const PopupMenuItem(
-                                              value: 'regular',
-                                              child: Row(
-                                                children: [
-                                                  Icon(Icons.print),
-                                                  SizedBox(width: 8),
-                                                  Text('Regular Invoice (A4)'),
-                                                ],
-                                              ),
-                                            ),
-                                            const PopupMenuItem(
-                                              value: 'thermal',
-                                              child: Row(
-                                                children: [
-                                                  Icon(Icons.receipt),
-                                                  SizedBox(width: 8),
-                                                  Text('Thermal Receipt'),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                            8,
                                           ),
-                                          color:
-                                              Theme.of(
-                                                context,
-                                              ).colorScheme.primary,
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 16,
-                                            vertical: 8,
-                                          ),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Icon(
-                                                Icons.print,
-                                                color:
-                                                    Theme.of(
-                                                      context,
-                                                    ).colorScheme.onPrimary,
-                                                size: 18,
-                                              ),
-                                              const SizedBox(width: 8),
-                                              Text(
-                                                'Print Invoice',
-                                                style: TextStyle(
-                                                  color:
-                                                      Theme.of(
-                                                        context,
-                                                      ).colorScheme.onPrimary,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                              const SizedBox(width: 4),
-                                              Icon(
-                                                Icons.arrow_drop_down,
-                                                color:
-                                                    Theme.of(
-                                                      context,
-                                                    ).colorScheme.onPrimary,
-                                                size: 18,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
+                                      icon: const Icon(Icons.print, size: 18),
+                                      label: const Text('Print Invoice'),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
+                                        foregroundColor:
+                                            Theme.of(
+                                              context,
+                                            ).colorScheme.onPrimary,
                                       ),
                                     ),
                                     const SizedBox(width: 8),
-                                    // Print Measurements Dropdown
-                                    PopupMenuButton<String>(
-                                      onSelected: (value) {
-                                        if (value == 'regular') {
-                                          _printMeasurementSlip(
+                                    // Print Measurements Button
+                                    ElevatedButton.icon(
+                                      onPressed:
+                                          () => _printMeasurementSlip(
                                             order,
                                             customer,
                                             garmentType,
-                                          );
-                                        } else if (value == 'thermal') {
-                                          _printThermalMeasurementSlip(
-                                            order,
-                                            customer,
-                                            garmentType,
-                                          );
-                                        }
-                                      },
-                                      itemBuilder:
-                                          (context) => [
-                                            const PopupMenuItem(
-                                              value: 'regular',
-                                              child: Row(
-                                                children: [
-                                                  Icon(Icons.straighten),
-                                                  SizedBox(width: 8),
-                                                  Text('Regular Slip (A4)'),
-                                                ],
-                                              ),
-                                            ),
-                                            const PopupMenuItem(
-                                              value: 'thermal',
-                                              child: Row(
-                                                children: [
-                                                  Icon(Icons.receipt_long),
-                                                  SizedBox(width: 8),
-                                                  Text('Thermal Slip'),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                            8,
                                           ),
-                                          color:
-                                              Theme.of(
-                                                context,
-                                              ).colorScheme.primary,
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 16,
-                                            vertical: 8,
-                                          ),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Icon(
-                                                Icons.straighten,
-                                                color:
-                                                    Theme.of(
-                                                      context,
-                                                    ).colorScheme.onPrimary,
-                                                size: 18,
-                                              ),
-                                              const SizedBox(width: 8),
-                                              Text(
-                                                'Print Measurements',
-                                                style: TextStyle(
-                                                  color:
-                                                      Theme.of(
-                                                        context,
-                                                      ).colorScheme.onPrimary,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                              const SizedBox(width: 4),
-                                              Icon(
-                                                Icons.arrow_drop_down,
-                                                color:
-                                                    Theme.of(
-                                                      context,
-                                                    ).colorScheme.onPrimary,
-                                                size: 18,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
+                                      icon: const Icon(
+                                        Icons.straighten,
+                                        size: 18,
+                                      ),
+                                      label: const Text('Print Measurements'),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
+                                        foregroundColor:
+                                            Theme.of(
+                                              context,
+                                            ).colorScheme.onPrimary,
                                       ),
                                     ),
                                     const SizedBox(width: 8),
@@ -604,62 +467,6 @@ class _OrdersScreenState extends State<OrdersScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error printing measurement slip: ${e.toString()}'),
-          ),
-        );
-      }
-    }
-  }
-
-  void _printThermalInvoice(
-    Order order,
-    Customer? customer,
-    GarmentType? garmentType,
-  ) async {
-    if (customer == null || garmentType == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Customer or garment type not found')),
-      );
-      return;
-    }
-
-    try {
-      await PrintingService.printThermalInvoice(order, customer, garmentType);
-    } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error printing thermal invoice: ${e.toString()}'),
-          ),
-        );
-      }
-    }
-  }
-
-  void _printThermalMeasurementSlip(
-    Order order,
-    Customer? customer,
-    GarmentType? garmentType,
-  ) async {
-    if (customer == null || garmentType == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Customer or garment type not found')),
-      );
-      return;
-    }
-
-    try {
-      await PrintingService.printThermalMeasurementSlip(
-        order,
-        customer,
-        garmentType,
-      );
-    } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Error printing thermal measurement slip: ${e.toString()}',
-            ),
           ),
         );
       }
