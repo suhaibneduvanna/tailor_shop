@@ -1,5 +1,5 @@
 @echo off
-echo Tailor Shop Management System - Icon Generator
+echo Libasu Thaqva - Icon Generator
 echo ===============================================
 echo.
 echo This batch file will help you create icons for your application.

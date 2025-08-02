@@ -1,5 +1,5 @@
 """
-Icon Generator for Tailor Shop Management System
+Icon Generator for Libasu Thaqva
 Converts SVG to PNG and ICO formats for Windows installer
 """
 
@@ -61,7 +61,7 @@ def main():
     png_path = current_dir / "app_icon.png"
     ico_path = current_dir / "app_icon.ico"
     
-    print("Tailor Shop Management System - Icon Generator")
+    print("Libasu Thaqva - Icon Generator")
     print("=" * 50)
     
     # Check if SVG file exists

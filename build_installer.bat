@@ -1,10 +1,10 @@
 @echo off
-title Tailor Shop Management - Installer Builder
+title Libasu Thaqva - Installer Builder
 color 0A
 
 echo.
 echo ===============================================
-echo   Tailor Shop Management - Installer Builder
+echo   Libasu Thaqva - Installer Builder
 echo ===============================================
 echo.
 

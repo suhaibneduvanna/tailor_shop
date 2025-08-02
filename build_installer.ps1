@@ -1,4 +1,4 @@
-# PowerShell script to build Tailor Shop Management installer
+# PowerShell script to build Libasu Thaqva installer
 param(
     [switch]$MSIXOnly,
     [switch]$InnoOnly,
@@ -8,7 +8,7 @@ param(
 
 function Show-Help {
     Write-Host ""
-    Write-Host "Tailor Shop Management System - Installer Builder" -ForegroundColor Green
+    Write-Host "Libasu Thaqva - Installer Builder" -ForegroundColor Green
     Write-Host "=================================================" -ForegroundColor Green
     Write-Host ""
     Write-Host "Usage: .\build_installer.ps1 [options]" -ForegroundColor Yellow
@@ -30,7 +30,7 @@ if (!$MSIXOnly -and !$InnoOnly) {
     $All = $true
 }
 
-Write-Host "🏭 Building Tailor Shop Management Installer..." -ForegroundColor Green
+Write-Host "🏭 Building Libasu Thaqva Installer..." -ForegroundColor Green
 Write-Host "===============================================" -ForegroundColor Green
 Write-Host ""
 
@@ -62,7 +62,7 @@ if ($MSIXOnly -or $All) {
         Write-Host "   You can use the SVG file we created to generate the PNG icon." -ForegroundColor Yellow
     }
     
-    flutter pub run msix:create
+    flutter pub run msix:create --store false
     
     if ($LASTEXITCODE -eq 0) {
         Write-Host "✅ MSIX installer created successfully!" -ForegroundColor Green

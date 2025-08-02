@@ -1,17 +1,17 @@
 [Setup]
-AppName=Tailor Shop Management
+AppName=Libasu Thaqva
 AppVersion=1.0.0
-AppVerName=Tailor Shop Management 1.0.0
-AppPublisher=Your Business Name
+AppVerName=Libasu Thaqva 1.0.0
+AppPublisher=Libasu Thaqva
 AppPublisherURL=https://yourwebsite.com
 AppSupportURL=https://yourwebsite.com/support
 AppUpdatesURL=https://yourwebsite.com/updates
-DefaultDirName={autopf}\Tailor Shop Management
-DefaultGroupName=Tailor Shop Management
+DefaultDirName={autopf}\Libasu Thaqva
+DefaultGroupName=Libasu Thaqva
 AllowNoIcons=yes
 LicenseFile=
 OutputDir=installer
-OutputBaseFilename=TailorShopManagement_Setup
+OutputBaseFilename=LibasuThaqva_Setup
 SetupIconFile=assets\icons\app_icon.ico
 Compression=lzma
 SolidCompression=yes
@@ -32,13 +32,13 @@ Source: "build\windows\x64\runner\Release\*"; DestDir: "{app}"; Flags: ignorever
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{group}\Tailor Shop Management"; Filename: "{app}\tailor_shop.exe"
-Name: "{group}\{cm:UninstallProgram,Tailor Shop Management}"; Filename: "{uninstallexe}"
-Name: "{autodesktop}\Tailor Shop Management"; Filename: "{app}\tailor_shop.exe"; Tasks: desktopicon
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\Tailor Shop Management"; Filename: "{app}\tailor_shop.exe"; Tasks: quicklaunchicon
+Name: "{group}\Libasu Thaqva"; Filename: "{app}\libasu_thaqva.exe"
+Name: "{group}\{cm:UninstallProgram,Libasu Thaqva}"; Filename: "{uninstallexe}"
+Name: "{autodesktop}\Libasu Thaqva"; Filename: "{app}\libasu_thaqva.exe"; Tasks: desktopicon
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\Libasu Thaqva"; Filename: "{app}\libasu_thaqva.exe"; Tasks: quicklaunchicon
 
 [Run]
-Filename: "{app}\tailor_shop.exe"; Description: "{cm:LaunchProgram,Tailor Shop Management}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\libasu_thaqva.exe"; Description: "{cm:LaunchProgram,Libasu Thaqva}"; Flags: nowait postinstall skipifsilent
 
 [Code]
 function GetUninstallString(): String;

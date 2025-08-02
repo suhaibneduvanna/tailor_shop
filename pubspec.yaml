@@ -134,6 +134,7 @@ msix_config:
   capabilities: 'internetClient,privateNetworkClientServer,documentsLibrary'
   languages: en-us
   store: false
+  install_certificate: false
 
 # Flutter launcher icons configuration
 flutter_launcher_icons:

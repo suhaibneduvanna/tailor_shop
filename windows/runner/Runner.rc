@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.compass" "\0"
-            VALUE "FileDescription", "tailor_shop" "\0"
+            VALUE "CompanyName", "Libasu Thaqva" "\0"
+            VALUE "FileDescription", "Libasu Thaqva - Tailoring & Cutpiece Center" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "tailor_shop" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2025 com.compass. All rights reserved." "\0"
+            VALUE "InternalName", "LibasuThaqva" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2025 Libasu Thaqva. All rights reserved." "\0"
             VALUE "OriginalFilename", "tailor_shop.exe" "\0"
-            VALUE "ProductName", "tailor_shop" "\0"
+            VALUE "ProductName", "Libasu Thaqva" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
