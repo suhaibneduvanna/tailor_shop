@@ -190,13 +190,9 @@ class DatabaseService {
   }
 
   static String generateInvoiceNumber() {
-    final now = DateTime.now();
-    final year = now.year.toString().substring(2);
-    final month = now.month.toString().padLeft(2, '0');
-    final day = now.day.toString().padLeft(2, '0');
     final orderCount = _orderBox.length + 1;
-
-    return 'INV$year$month$day${orderCount.toString().padLeft(4, '0')}';
+    final invoiceNumber = 1000 + orderCount; // Start from 1001
+    return invoiceNumber.toString();
   }
 
   static Future<void> close() async {
