@@ -95,6 +95,11 @@ class TailorShopProvider with ChangeNotifier {
     return DatabaseService.searchOrdersByInvoice(invoiceNumber);
   }
 
+  List<Order> searchOrders(String query) {
+    if (query.isEmpty) return _orders;
+    return DatabaseService.searchOrders(query);
+  }
+
   List<Order> getOrdersByCustomerId(String customerId) {
     return DatabaseService.getOrdersByCustomerId(customerId);
   }

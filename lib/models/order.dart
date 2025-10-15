@@ -46,6 +46,9 @@ class Order extends HiveObject {
   @HiveField(13)
   double? advancePayment;
 
+  @HiveField(14)
+  List<Map<String, dynamic>>? additionalItems;
+
   Order({
     required this.id,
     required this.invoiceNumber,
@@ -61,6 +64,7 @@ class Order extends HiveObject {
     required this.createdAt,
     required this.updatedAt,
     this.advancePayment,
+    this.additionalItems,
   });
 
   Map<String, dynamic> toJson() {
@@ -79,6 +83,7 @@ class Order extends HiveObject {
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
       'advancePayment': advancePayment,
+      'additionalItems': additionalItems,
     };
   }
 
@@ -98,6 +103,10 @@ class Order extends HiveObject {
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
       advancePayment: json['advancePayment']?.toDouble(),
+      additionalItems:
+          json['additionalItems'] != null
+              ? List<Map<String, dynamic>>.from(json['additionalItems'])
+              : null,
     );
   }
 }

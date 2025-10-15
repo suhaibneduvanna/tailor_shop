@@ -5,6 +5,7 @@ import '../models/order.dart';
 import '../models/customer.dart';
 import '../models/garment_type.dart';
 import '../providers/tailor_shop_provider.dart';
+import '../services/printing_service.dart';
 
 class AddEditOrderScreen extends StatefulWidget {
   final Order? order;
@@ -62,6 +63,28 @@ class _AddEditOrderScreenState extends State<AddEditOrderScreen> {
 
     // Load advance payment
     _advancePaymentController.text = (order.advancePayment ?? 0.0).toString();
+
+    // Load additional items from separate field
+    if (order.additionalItems != null) {
+      for (var item in order.additionalItems!) {
+        final quantity = item['quantity'] ?? 1.0;
+        // Format quantity to avoid unnecessary decimal places in display
+        final quantityStr =
+            quantity is int
+                ? quantity.toString()
+                : (quantity % 1 == 0
+                    ? quantity.toInt().toString()
+                    : quantity.toString());
+
+        _additionalItems.add({
+          'nameController': TextEditingController(text: item['name'] ?? ''),
+          'quantityController': TextEditingController(text: quantityStr),
+          'priceController': TextEditingController(
+            text: (item['price'] ?? 0.0).toString(),
+          ),
+        });
+      }
+    }
 
     // Initialize measurement controllers for editing
     if (_selectedGarmentType != null) {
@@ -171,6 +194,7 @@ class _AddEditOrderScreenState extends State<AddEditOrderScreen> {
     // Dispose additional item controllers
     for (var item in _additionalItems) {
       item['nameController']?.dispose();
+      item['quantityController']?.dispose();
       item['priceController']?.dispose();
     }
     super.dispose();
@@ -282,25 +306,39 @@ class _AddEditOrderScreenState extends State<AddEditOrderScreen> {
                         ),
                         const SizedBox(height: 6),
                         if (_additionalItems.isNotEmpty) ...[
-                          ...(_additionalItems.map(
-                            (item) => Padding(
+                          ...(_additionalItems.map((item) {
+                            final quantity =
+                                double.tryParse(
+                                  item['quantityController'].text,
+                                ) ??
+                                1.0;
+                            final price =
+                                double.tryParse(item['priceController'].text) ??
+                                0.0;
+                            final total = quantity * price;
+                            // Format quantity to remove unnecessary decimal places
+                            final quantityStr =
+                                quantity % 1 == 0
+                                    ? quantity.toInt().toString()
+                                    : quantity.toString();
+                            return Padding(
                               padding: const EdgeInsets.only(bottom: 6),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    '${item['nameController'].text.isEmpty ? "Additional Item" : item['nameController'].text}:',
+                                    '${item['nameController'].text.isEmpty ? "Additional Item" : item['nameController'].text} (×$quantityStr):',
                                     style: const TextStyle(fontSize: 14),
                                   ),
                                   Text(
-                                    '₹${(double.tryParse(item['priceController'].text) ?? 0.0).toStringAsFixed(2)}',
+                                    '₹${total.toStringAsFixed(2)}',
                                     style: const TextStyle(fontSize: 14),
                                   ),
                                 ],
                               ),
-                            ),
-                          )),
+                            );
+                          })),
                         ],
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -713,6 +751,34 @@ class _AddEditOrderScreenState extends State<AddEditOrderScreen> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: TextFormField(
+                          controller: item['quantityController'],
+                          decoration: const InputDecoration(
+                            labelText: 'Qty',
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                          ),
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
+                          onChanged: (value) => setState(() {}),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Enter qty';
+                            }
+                            if (double.tryParse(value) == null ||
+                                double.parse(value) <= 0) {
+                              return 'Invalid qty';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: TextFormField(
                           controller: item['priceController'],
                           decoration: const InputDecoration(
                             labelText: 'Price (₹)',
@@ -767,6 +833,9 @@ class _AddEditOrderScreenState extends State<AddEditOrderScreen> {
     setState(() {
       _additionalItems.add({
         'nameController': TextEditingController(),
+        'quantityController': TextEditingController(
+          text: '1',
+        ), // Default quantity 1
         'priceController': TextEditingController(),
       });
     });
@@ -776,6 +845,7 @@ class _AddEditOrderScreenState extends State<AddEditOrderScreen> {
     setState(() {
       // Dispose controllers before removing
       _additionalItems[index]['nameController']?.dispose();
+      _additionalItems[index]['quantityController']?.dispose();
       _additionalItems[index]['priceController']?.dispose();
       _additionalItems.removeAt(index);
     });
@@ -1206,19 +1276,15 @@ class _AddEditOrderScreenState extends State<AddEditOrderScreen> {
     final additionalItemsTotal = _getAdditionalItemsTotal();
     final total = garmentTotal + additionalItemsTotal;
 
-    // Debug print to see if calculation is being called
-    print(
-      'Calculating price: (${_selectedGarmentType!.basePrice} x $validQuantity) + $additionalItemsTotal = $total',
-    );
-
     return total;
   }
 
   double _getAdditionalItemsTotal() {
     double total = 0.0;
     for (var item in _additionalItems) {
+      final quantity = double.tryParse(item['quantityController'].text) ?? 1.0;
       final price = double.tryParse(item['priceController'].text) ?? 0.0;
-      total += price;
+      total += (quantity * price);
     }
     return total;
   }
@@ -1230,31 +1296,33 @@ class _AddEditOrderScreenState extends State<AddEditOrderScreen> {
   }
 
   String? _buildOrderNotes() {
-    List<String> notesParts = [];
-
-    // Add regular notes if any
+    // Only add regular notes, not additional items
     if (_notesController.text.isNotEmpty) {
-      notesParts.add(_notesController.text);
+      return _notesController.text;
     }
+    return null;
+  }
 
-    // Add additional items information
-    if (_additionalItems.isNotEmpty) {
-      List<String> itemsInfo = [];
-      for (var item in _additionalItems) {
-        String itemName =
-            item['nameController'].text.isNotEmpty
-                ? item['nameController'].text
-                : "Additional Item";
-        String itemPrice =
-            item['priceController'].text.isNotEmpty
-                ? "₹${item['priceController'].text}"
-                : "₹0";
-        itemsInfo.add("$itemName ($itemPrice)");
-      }
-      notesParts.add("Additional Items: ${itemsInfo.join(', ')}");
+  List<Map<String, dynamic>>? _buildAdditionalItemsList() {
+    if (_additionalItems.isEmpty) return null;
+
+    List<Map<String, dynamic>> items = [];
+    for (var item in _additionalItems) {
+      String itemName =
+          item['nameController'].text.isNotEmpty
+              ? item['nameController'].text
+              : "Additional Item";
+      double itemQuantity =
+          double.tryParse(item['quantityController'].text) ?? 1.0;
+      double itemPrice = double.tryParse(item['priceController'].text) ?? 0.0;
+
+      items.add({
+        'name': itemName,
+        'quantity': itemQuantity,
+        'price': itemPrice,
+      });
     }
-
-    return notesParts.isEmpty ? null : notesParts.join('\n');
+    return items;
   }
 
   int _getValidQuantity() {
@@ -1285,6 +1353,7 @@ class _AddEditOrderScreenState extends State<AddEditOrderScreen> {
         createdAt: _isEditing ? widget.order!.createdAt : now,
         updatedAt: now,
         advancePayment: double.tryParse(_advancePaymentController.text),
+        additionalItems: _buildAdditionalItemsList(),
       );
 
       try {
@@ -1296,6 +1365,16 @@ class _AddEditOrderScreenState extends State<AddEditOrderScreen> {
 
         if (context.mounted) {
           Navigator.pop(context);
+
+          // Show print confirmation dialog for new orders
+          if (!_isEditing) {
+            _showPrintConfirmationDialog(
+              order,
+              _selectedCustomer!,
+              _selectedGarmentType!,
+            );
+          }
+
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
@@ -1324,6 +1403,70 @@ class _AddEditOrderScreenState extends State<AddEditOrderScreen> {
         ),
       );
     }
+  }
+
+  void _showPrintConfirmationDialog(
+    Order order,
+    Customer customer,
+    GarmentType garmentType,
+  ) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: Row(
+              children: [
+                const Icon(Icons.print, color: Colors.green),
+                const SizedBox(width: 8),
+                const Text('Print Order'),
+              ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Order ${order.invoiceNumber} created successfully!',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
+                const Text('Would you like to print the order receipt?'),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Skip'),
+              ),
+
+              ElevatedButton(
+                onPressed: () async {
+                  Navigator.pop(context);
+                  try {
+                    await PrintingService.printCombinedSlip(
+                      order,
+                      customer,
+                      garmentType,
+                    );
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Error printing combined slip: $e'),
+                        ),
+                      );
+                    }
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF2E7D32),
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Print'),
+              ),
+            ],
+          ),
+    );
   }
 
   String _formatDate(DateTime date) {

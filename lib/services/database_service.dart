@@ -145,6 +145,36 @@ class DatabaseService {
     }).toList();
   }
 
+  static List<Order> searchOrders(String query) {
+    if (query.isEmpty) return getAllOrders();
+
+    final orders = _orderBox.values.toList();
+    final customers = _customerBox.values.toList();
+
+    return orders.where((order) {
+      // Search by invoice number
+      final matchesInvoice = order.invoiceNumber.toLowerCase().contains(
+        query.toLowerCase(),
+      );
+
+      // Search by customer name and phone number
+      final customer = customers.cast<Customer?>().firstWhere(
+        (c) => c?.id == order.customerId,
+        orElse: () => null,
+      );
+
+      if (customer == null) return matchesInvoice;
+
+      final matchesCustomerName = customer.name.toLowerCase().contains(
+        query.toLowerCase(),
+      );
+
+      final matchesCustomerPhone = customer.phoneNumber.contains(query);
+
+      return matchesInvoice || matchesCustomerName || matchesCustomerPhone;
+    }).toList();
+  }
+
   static List<Order> getOrdersByCustomerId(String customerId) {
     final orders = _orderBox.values.toList();
     return orders.where((order) => order.customerId == customerId).toList();

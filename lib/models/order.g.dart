@@ -31,13 +31,16 @@ class OrderAdapter extends TypeAdapter<Order> {
       createdAt: fields[11] as DateTime,
       updatedAt: fields[12] as DateTime,
       advancePayment: fields[13] as double?,
+      additionalItems: (fields[14] as List?)
+          ?.map((dynamic e) => (e as Map).cast<String, dynamic>())
+          ?.toList(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Order obj) {
     writer
-      ..writeByte(14)
+      ..writeByte(15)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -65,7 +68,9 @@ class OrderAdapter extends TypeAdapter<Order> {
       ..writeByte(12)
       ..write(obj.updatedAt)
       ..writeByte(13)
-      ..write(obj.advancePayment);
+      ..write(obj.advancePayment)
+      ..writeByte(14)
+      ..write(obj.additionalItems);
   }
 
   @override

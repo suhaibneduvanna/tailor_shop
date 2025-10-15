@@ -34,7 +34,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
   void _filterOrders() {
     final provider = Provider.of<TailorShopProvider>(context, listen: false);
     setState(() {
-      _filteredOrders = provider.searchOrdersByInvoice(_searchController.text);
+      _filteredOrders = provider.searchOrders(_searchController.text);
       if (_selectedStatus != null) {
         _filteredOrders =
             _filteredOrders
@@ -90,7 +90,8 @@ class _OrdersScreenState extends State<OrdersScreen> {
                     controller: _searchController,
                     decoration: const InputDecoration(
                       labelText: 'Search orders...',
-                      hintText: 'Enter invoice number',
+                      hintText:
+                          'Invoice number, customer name, or mobile number',
                       prefixIcon: Icon(Icons.search),
                       border: OutlineInputBorder(),
                     ),
@@ -168,7 +169,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Customer: ${customer?.name ?? 'Unknown'}'),
+                            Text(
+                              'Customer: ${customer?.name ?? 'Unknown'} (${customer?.phoneNumber ?? 'Unknown'})',
+                            ),
                             Text('Garment: ${garmentType?.name ?? 'Unknown'}'),
                             Text(
                               'Amount: ₹${order.totalPrice.toStringAsFixed(2)}',
@@ -176,7 +179,10 @@ class _OrdersScreenState extends State<OrdersScreen> {
                           ],
                         ),
                         trailing: Chip(
-                          label: Text(order.status.name),
+                          label: Text(
+                            order.status.name,
+                            style: TextStyle(color: Colors.white),
+                          ),
                           backgroundColor: _getStatusColor(order.status),
                         ),
                         children: [
@@ -287,112 +293,215 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                   Text('Notes: ${order.notes}'),
                                 ],
                                 const SizedBox(height: 16),
+                                // Action Buttons Row - Print/Edit/Delete on left, Status buttons on right
                                 Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    // Print Invoice Button
-                                    ElevatedButton.icon(
-                                      onPressed:
-                                          () => _printInvoice(
-                                            order,
-                                            customer,
-                                            garmentType,
+                                    // Print, Edit, Status, Delete Buttons (Left Side)
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        ElevatedButton.icon(
+                                          onPressed:
+                                              () => _printCombinedSlip(
+                                                order,
+                                                customer,
+                                                garmentType,
+                                              ),
+                                          icon: const Icon(
+                                            Icons.print,
+                                            size: 16,
                                           ),
-                                      icon: const Icon(Icons.print, size: 18),
-                                      label: const Text('Print Invoice'),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            Theme.of(
-                                              context,
-                                            ).colorScheme.primary,
-                                        foregroundColor:
-                                            Theme.of(
-                                              context,
-                                            ).colorScheme.onPrimary,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    // Print Measurements Button
-                                    ElevatedButton.icon(
-                                      onPressed:
-                                          () => _printMeasurementSlip(
-                                            order,
-                                            customer,
-                                            garmentType,
+                                          label: const Text('Print'),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                Theme.of(
+                                                  context,
+                                                ).colorScheme.primary,
+                                            foregroundColor:
+                                                Theme.of(
+                                                  context,
+                                                ).colorScheme.onPrimary,
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 12,
+                                              vertical: 8,
+                                            ),
                                           ),
-                                      icon: const Icon(
-                                        Icons.straighten,
-                                        size: 18,
-                                      ),
-                                      label: const Text('Print Measurements'),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            Theme.of(
-                                              context,
-                                            ).colorScheme.primary,
-                                        foregroundColor:
-                                            Theme.of(
-                                              context,
-                                            ).colorScheme.onPrimary,
-                                      ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        ElevatedButton.icon(
+                                          onPressed:
+                                              () => _showEditOrderDialog(
+                                                context,
+                                                order,
+                                              ),
+                                          icon: const Icon(
+                                            Icons.edit,
+                                            size: 16,
+                                          ),
+                                          label: const Text('Edit'),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.blue,
+                                            foregroundColor: Colors.white,
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 12,
+                                              vertical: 8,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        ElevatedButton.icon(
+                                          onPressed:
+                                              () => _showUpdateStatusDialog(
+                                                context,
+                                                order,
+                                              ),
+                                          icon: const Icon(
+                                            Icons.update,
+                                            size: 16,
+                                          ),
+                                          label: const Text('Status'),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.teal,
+                                            foregroundColor: Colors.white,
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 12,
+                                              vertical: 8,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        ElevatedButton.icon(
+                                          onPressed:
+                                              () => _showDeleteConfirmation(
+                                                context,
+                                                order,
+                                              ),
+                                          icon: const Icon(
+                                            Icons.delete,
+                                            size: 16,
+                                          ),
+                                          label: const Text('Delete'),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.red,
+                                            foregroundColor: Colors.white,
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 12,
+                                              vertical: 8,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    const SizedBox(width: 8),
-                                    PopupMenuButton(
-                                      itemBuilder:
-                                          (context) => [
-                                            const PopupMenuItem(
-                                              value: 'edit',
-                                              child: Row(
-                                                children: [
-                                                  Icon(Icons.edit),
-                                                  SizedBox(width: 8),
-                                                  Text('Edit'),
-                                                ],
+                                    // Status Action Buttons (Right Side)
+                                    if (order.status != OrderStatus.delivered &&
+                                        order.status != OrderStatus.cancelled)
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          // Pending Button (for reversing status)
+                                          if (order.status !=
+                                              OrderStatus.pending)
+                                            ElevatedButton.icon(
+                                              onPressed:
+                                                  () => _updateOrderStatus(
+                                                    order,
+                                                    OrderStatus.pending,
+                                                  ),
+                                              icon: const Icon(
+                                                Icons.schedule,
+                                                size: 16,
+                                              ),
+                                              label: const Text('Pending'),
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.orange,
+                                                foregroundColor: Colors.white,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 12,
+                                                      vertical: 8,
+                                                    ),
                                               ),
                                             ),
-                                            const PopupMenuItem(
-                                              value: 'status',
-                                              child: Row(
-                                                children: [
-                                                  Icon(Icons.update),
-                                                  SizedBox(width: 8),
-                                                  Text('Update Status'),
-                                                ],
+                                          if (order.status !=
+                                              OrderStatus.pending)
+                                            const SizedBox(width: 8),
+                                          // Completed Button (only if not already completed)
+                                          if (order.status !=
+                                              OrderStatus.completed)
+                                            ElevatedButton.icon(
+                                              onPressed:
+                                                  () => _updateOrderStatus(
+                                                    order,
+                                                    OrderStatus.completed,
+                                                  ),
+                                              icon: const Icon(
+                                                Icons.check_circle,
+                                                size: 16,
+                                              ),
+                                              label: const Text('Complete'),
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.green,
+                                                foregroundColor: Colors.white,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 12,
+                                                      vertical: 8,
+                                                    ),
                                               ),
                                             ),
-                                            const PopupMenuItem(
-                                              value: 'delete',
-                                              child: Row(
-                                                children: [
-                                                  Icon(Icons.delete),
-                                                  SizedBox(width: 8),
-                                                  Text('Delete'),
-                                                ],
-                                              ),
+                                          if (order.status !=
+                                              OrderStatus.completed)
+                                            const SizedBox(width: 8),
+                                          // Delivered Button
+                                          ElevatedButton.icon(
+                                            onPressed:
+                                                () => _updateOrderStatus(
+                                                  order,
+                                                  OrderStatus.delivered,
+                                                ),
+                                            icon: const Icon(
+                                              Icons.local_shipping,
+                                              size: 16,
                                             ),
-                                          ],
-                                      onSelected: (value) {
-                                        switch (value) {
-                                          case 'edit':
-                                            _showEditOrderDialog(
-                                              context,
-                                              order,
-                                            );
-                                            break;
-                                          case 'status':
-                                            _showUpdateStatusDialog(
-                                              context,
-                                              order,
-                                            );
-                                            break;
-                                          case 'delete':
-                                            _showDeleteConfirmation(
-                                              context,
-                                              order,
-                                            );
-                                            break;
-                                        }
-                                      },
-                                    ),
+                                            label: const Text('Deliver'),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.purple,
+                                              foregroundColor: Colors.white,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 12,
+                                                    vertical: 8,
+                                                  ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          // Cancel Button
+                                          ElevatedButton.icon(
+                                            onPressed:
+                                                () => _updateOrderStatus(
+                                                  order,
+                                                  OrderStatus.cancelled,
+                                                ),
+                                            icon: const Icon(
+                                              Icons.cancel,
+                                              size: 16,
+                                            ),
+                                            label: const Text('Cancel'),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  Colors.red.shade600,
+                                              foregroundColor: Colors.white,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 12,
+                                                    vertical: 8,
+                                                  ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                   ],
                                 ),
                               ],
@@ -425,7 +534,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
     );
   }
 
-  void _printInvoice(
+  void _printCombinedSlip(
     Order order,
     Customer? customer,
     GarmentType? garmentType,
@@ -438,35 +547,71 @@ class _OrdersScreenState extends State<OrdersScreen> {
     }
 
     try {
-      await PrintingService.printInvoice(order, customer, garmentType);
+      await PrintingService.printCombinedSlip(order, customer, garmentType);
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error printing invoice: ${e.toString()}')),
+          SnackBar(
+            content: Text('Error printing combined slip: ${e.toString()}'),
+          ),
         );
       }
     }
   }
 
-  void _printMeasurementSlip(
-    Order order,
-    Customer? customer,
-    GarmentType? garmentType,
-  ) async {
-    if (customer == null || garmentType == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Customer or garment type not found')),
-      );
-      return;
-    }
+  void _updateOrderStatus(Order order, OrderStatus newStatus) async {
+    // Show confirmation dialog for status change
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: Text('Update Order Status'),
+            content: Text(
+              'Are you sure you want to mark order ${order.invoiceNumber} as ${newStatus.name}?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Confirm'),
+              ),
+            ],
+          ),
+    );
 
-    try {
-      await PrintingService.printMeasurementSlip(order, customer, garmentType);
-    } catch (e) {
+    if (confirmed == true) {
+      final provider = Provider.of<TailorShopProvider>(context, listen: false);
+
+      final updatedOrder = Order(
+        id: order.id,
+        invoiceNumber: order.invoiceNumber,
+        customerId: order.customerId,
+        garmentTypeId: order.garmentTypeId,
+        measurements: order.measurements,
+        quantity: order.quantity,
+        totalPrice: order.totalPrice,
+        orderDate: order.orderDate,
+        deliveryDate: order.deliveryDate,
+        status: newStatus,
+        notes: order.notes,
+        createdAt: order.createdAt,
+        updatedAt: DateTime.now(),
+        advancePayment: order.advancePayment,
+        additionalItems: order.additionalItems,
+      );
+
+      await provider.updateOrder(updatedOrder);
+
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error printing measurement slip: ${e.toString()}'),
+            content: Text(
+              'Order ${order.invoiceNumber} marked as ${newStatus.name}',
+            ),
+            backgroundColor: _getStatusColor(newStatus),
           ),
         );
       }
@@ -532,6 +677,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                       createdAt: order.createdAt,
                       updatedAt: DateTime.now(),
                       advancePayment: order.advancePayment,
+                      additionalItems: order.additionalItems,
                     );
 
                     await provider.updateOrder(updatedOrder);
