@@ -113,7 +113,7 @@ class PrintingService {
 
               // Customer details and order info in single box
               _buildMeasurementCustomerAndOrderDetails(order, customer),
-              pw.SizedBox(height: 20),
+              pw.SizedBox(height: 5),
 
               // Garment type
               pw.Text(
@@ -128,6 +128,10 @@ class PrintingService {
 
               // Measurements
               _buildMeasurementDetails(order, garmentType),
+              pw.SizedBox(height: 20),
+
+              // Additional Items for Measurement Slip
+              _buildAdditionalItemsForMeasurement(order),
               pw.SizedBox(height: 20),
 
               // Notes section
@@ -763,6 +767,10 @@ class PrintingService {
 
                       // Measurements
                       _buildMeasurementDetails(order, garmentType),
+                      pw.SizedBox(height: 10),
+
+                      // Additional Items for Measurement Slip
+                      _buildAdditionalItemsForMeasurement(order),
 
                       // Notes section in combined slip
                       if (order.notes != null && order.notes!.isNotEmpty) ...[
@@ -809,6 +817,91 @@ class PrintingService {
     );
 
     return pdf;
+  }
+
+  static pw.Widget _buildAdditionalItemsForMeasurement(Order order) {
+    if (order.additionalItems == null || order.additionalItems!.isEmpty) {
+      return pw.Container();
+    }
+
+    return pw.Container(
+      child: pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.Text(
+            'Additional Items',
+            style: pw.TextStyle(
+              fontSize: 12,
+              fontWeight: pw.FontWeight.bold,
+              color: PdfColors.black,
+            ),
+          ),
+          pw.SizedBox(height: 5),
+          pw.Table(
+            border: pw.TableBorder.all(color: PdfColors.grey300),
+            columnWidths: {
+              0: const pw.FlexColumnWidth(2),
+              1: const pw.FlexColumnWidth(1),
+            },
+            children: [
+              pw.TableRow(
+                decoration: const pw.BoxDecoration(color: PdfColors.grey100),
+                children: [
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.all(5),
+                    child: pw.Text(
+                      'Item',
+                      style: pw.TextStyle(
+                        fontWeight: pw.FontWeight.bold,
+                        fontSize: 10,
+                        color: PdfColors.black,
+                      ),
+                    ),
+                  ),
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.all(5),
+                    child: pw.Text(
+                      'Quantity',
+                      style: pw.TextStyle(
+                        fontWeight: pw.FontWeight.bold,
+                        fontSize: 10,
+                        color: PdfColors.black,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              ...order.additionalItems!.map(
+                (item) => pw.TableRow(
+                  children: [
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(5),
+                      child: pw.Text(
+                        item['name'] ?? 'Item',
+                        style: const pw.TextStyle(
+                          fontSize: 10,
+                          color: PdfColors.black,
+                        ),
+                      ),
+                    ),
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(5),
+                      child: pw.Text(
+                        _formatQuantity(item['quantity'] ?? 1.0),
+                        style: const pw.TextStyle(
+                          fontSize: 10,
+                          color: PdfColors.black,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   static String _formatDate(DateTime date) {
