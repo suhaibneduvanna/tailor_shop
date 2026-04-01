@@ -113,13 +113,12 @@ class PrintingService {
 
               // Customer details and order info in single box
               _buildMeasurementCustomerAndOrderDetails(order, customer),
-              pw.SizedBox(height: 5),
 
               // Garment type
               pw.Text(
                 'Garment Type: ${garmentType.name}',
                 style: pw.TextStyle(
-                  fontSize: 14,
+                  fontSize: 11,
                   fontWeight: pw.FontWeight.bold,
                   color: PdfColors.black,
                 ),
@@ -148,7 +147,7 @@ class PrintingService {
                       pw.Text(
                         'NOTES',
                         style: pw.TextStyle(
-                          fontSize: 14,
+                          fontSize: 11,
                           fontWeight: pw.FontWeight.bold,
                           color: PdfColors.black,
                         ),
@@ -157,7 +156,7 @@ class PrintingService {
                       pw.Text(
                         order.notes!,
                         style: const pw.TextStyle(
-                          fontSize: 12,
+                          fontSize: 10,
                           color: PdfColors.black,
                         ),
                       ),
@@ -278,12 +277,12 @@ class PrintingService {
           pw.Text(
             "MEASUREMENT SLIP",
             style: pw.TextStyle(
-              fontSize: 14,
+              fontSize: 12,
               fontWeight: pw.FontWeight.bold,
               color: PdfColors.black,
             ),
           ),
-          pw.SizedBox(height: 10),
+          pw.SizedBox(height: 5),
           pw.Row(
             mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
             crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -295,18 +294,25 @@ class PrintingService {
                   pw.Text(
                     '${customer.name}',
                     style: pw.TextStyle(
+                      fontSize: 10,
                       color: PdfColors.black,
                       fontWeight: pw.FontWeight.bold,
                     ),
                   ),
                   pw.Text(
                     '${customer.phoneNumber}',
-                    style: const pw.TextStyle(color: PdfColors.black),
+                    style: const pw.TextStyle(
+                      fontSize: 10,
+                      color: PdfColors.black,
+                    ),
                   ),
                   if (customer.address != null)
                     pw.Text(
                       '${customer.address}',
-                      style: const pw.TextStyle(color: PdfColors.black),
+                      style: const pw.TextStyle(
+                        fontSize: 10,
+                        color: PdfColors.black,
+                      ),
                     ),
                 ],
               ),
@@ -316,15 +322,24 @@ class PrintingService {
                 children: [
                   pw.Text(
                     'Invoice No: ${order.invoiceNumber}',
-                    style: const pw.TextStyle(color: PdfColors.black),
+                    style: const pw.TextStyle(
+                      fontSize: 10,
+                      color: PdfColors.black,
+                    ),
                   ),
                   pw.Text(
                     'Delivery Date: ${_formatDate(order.deliveryDate)}',
-                    style: const pw.TextStyle(color: PdfColors.black),
+                    style: const pw.TextStyle(
+                      fontSize: 10,
+                      color: PdfColors.black,
+                    ),
                   ),
                   pw.Text(
                     'Quantity: ${order.quantity}',
-                    style: const pw.TextStyle(color: PdfColors.black),
+                    style: const pw.TextStyle(
+                      fontSize: 10,
+                      color: PdfColors.black,
+                    ),
                   ),
                 ],
               ),
@@ -598,6 +613,7 @@ class PrintingService {
                     child: pw.Text(
                       'Measurement',
                       style: pw.TextStyle(
+                        fontSize: 10,
                         fontWeight: pw.FontWeight.bold,
                         color: PdfColors.black,
                       ),
@@ -608,6 +624,7 @@ class PrintingService {
                     child: pw.Text(
                       'Value (inches)',
                       style: pw.TextStyle(
+                        fontSize: 10,
                         fontWeight: pw.FontWeight.bold,
                         color: PdfColors.black,
                       ),
@@ -623,14 +640,20 @@ class PrintingService {
                           padding: const pw.EdgeInsets.all(8),
                           child: pw.Text(
                             entry.key,
-                            style: const pw.TextStyle(color: PdfColors.black),
+                            style: const pw.TextStyle(
+                              fontSize: 10,
+                              color: PdfColors.black,
+                            ),
                           ),
                         ),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8),
                           child: pw.Text(
                             '${entry.value}"',
-                            style: const pw.TextStyle(color: PdfColors.black),
+                            style: const pw.TextStyle(
+                              fontSize: 10,
+                              color: PdfColors.black,
+                            ),
                           ),
                         ),
                       ],
@@ -758,7 +781,7 @@ class PrintingService {
                       pw.Text(
                         'Garment Type: ${garmentType.name}',
                         style: pw.TextStyle(
-                          fontSize: 12,
+                          fontSize: 10,
                           fontWeight: pw.FontWeight.bold,
                           color: PdfColors.black,
                         ),
@@ -787,7 +810,7 @@ class PrintingService {
                               pw.Text(
                                 'NOTES:',
                                 style: pw.TextStyle(
-                                  fontSize: 9,
+                                  fontSize: 8,
                                   fontWeight: pw.FontWeight.bold,
                                   color: PdfColors.black,
                                 ),
@@ -796,7 +819,7 @@ class PrintingService {
                               pw.Text(
                                 order.notes!,
                                 style: const pw.TextStyle(
-                                  fontSize: 8,
+                                  fontSize: 7,
                                   color: PdfColors.black,
                                 ),
                               ),
@@ -831,7 +854,7 @@ class PrintingService {
           pw.Text(
             'Additional Items',
             style: pw.TextStyle(
-              fontSize: 12,
+              fontSize: 10,
               fontWeight: pw.FontWeight.bold,
               color: PdfColors.black,
             ),
@@ -853,7 +876,7 @@ class PrintingService {
                       'Item',
                       style: pw.TextStyle(
                         fontWeight: pw.FontWeight.bold,
-                        fontSize: 10,
+                        fontSize: 9,
                         color: PdfColors.black,
                       ),
                     ),
@@ -864,7 +887,7 @@ class PrintingService {
                       'Quantity',
                       style: pw.TextStyle(
                         fontWeight: pw.FontWeight.bold,
-                        fontSize: 10,
+                        fontSize: 9,
                         color: PdfColors.black,
                       ),
                     ),
@@ -879,7 +902,7 @@ class PrintingService {
                       child: pw.Text(
                         item['name'] ?? 'Item',
                         style: const pw.TextStyle(
-                          fontSize: 10,
+                          fontSize: 9,
                           color: PdfColors.black,
                         ),
                       ),
@@ -889,7 +912,7 @@ class PrintingService {
                       child: pw.Text(
                         _formatQuantity(item['quantity'] ?? 1.0),
                         style: const pw.TextStyle(
-                          fontSize: 10,
+                          fontSize: 9,
                           color: PdfColors.black,
                         ),
                       ),
