@@ -1,7 +1,7 @@
 [Setup]
 AppName=Libasu Thaqva
-AppVersion=1.0.1
-AppVerName=Libasu Thaqva 1.0.1
+AppVersion=1.2.2
+AppVerName=Libasu Thaqva 1.2.2
 AppPublisher=Libasu Thaqva
 AppPublisherURL=https://yourwebsite.com
 AppSupportURL=https://yourwebsite.com/support
