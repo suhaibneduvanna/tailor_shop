@@ -21,7 +21,7 @@ class OrderAdapter extends TypeAdapter<Order> {
       invoiceNumber: fields[1] as String,
       customerId: fields[2] as String,
       garmentTypeId: fields[3] as String,
-      measurements: (fields[4] as Map).cast<String, double>(),
+      measurements: (fields[4] as Map).cast<String, dynamic>(),
       quantity: fields[5] as int,
       totalPrice: fields[6] as double,
       orderDate: fields[7] as DateTime,

@@ -28,7 +28,7 @@ class _AddEditOrderScreenState extends State<AddEditOrderScreen> {
   DateTime _orderDate = DateTime.now();
   DateTime _deliveryDate = DateTime.now().add(const Duration(days: 7));
   OrderStatus _status = OrderStatus.pending;
-  Map<String, double> _measurements = {};
+  Map<String, dynamic> _measurements = {};
   Map<String, TextEditingController> _measurementControllers = {};
   bool _showCustomerSearch = false;
   List<Map<String, dynamic>> _additionalItems = [];
@@ -89,7 +89,7 @@ class _AddEditOrderScreenState extends State<AddEditOrderScreen> {
     // Initialize measurement controllers for editing
     if (_selectedGarmentType != null) {
       for (final measurement in _selectedGarmentType!.measurements) {
-        final value = _measurements[measurement] ?? 0.0;
+        final value = _measurements[measurement]?.toString() ?? '0';
         _measurementControllers[measurement] = TextEditingController(
           text: value.toString(),
         );
@@ -591,7 +591,7 @@ class _AddEditOrderScreenState extends State<AddEditOrderScreen> {
               // Initialize measurements with default values and create controllers
               if (value != null) {
                 for (final measurement in value.measurements) {
-                  _measurements[measurement] = 0.0;
+                  _measurements[measurement] = '0';
                   _measurementControllers[measurement] = TextEditingController(
                     text: '0',
                   );
@@ -663,16 +663,13 @@ class _AddEditOrderScreenState extends State<AddEditOrderScreen> {
                       vertical: 8,
                     ),
                   ),
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.text,
                   onChanged: (value) {
-                    _measurements[measurement] = double.tryParse(value) ?? 0.0;
+                    _measurements[measurement] = value;
                   },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Required';
-                    }
-                    if (double.tryParse(value) == null) {
-                      return 'Invalid';
                     }
                     return null;
                   },

@@ -17,7 +17,7 @@ class Order extends HiveObject {
   String garmentTypeId;
 
   @HiveField(4)
-  Map<String, double> measurements;
+  Map<String, dynamic> measurements;
 
   @HiveField(5)
   int quantity;
@@ -93,7 +93,7 @@ class Order extends HiveObject {
       invoiceNumber: json['invoiceNumber'],
       customerId: json['customerId'],
       garmentTypeId: json['garmentTypeId'],
-      measurements: Map<String, double>.from(json['measurements']),
+      measurements: Map<String, dynamic>.from(json['measurements']),
       quantity: json['quantity'],
       totalPrice: json['totalPrice'].toDouble(),
       orderDate: DateTime.parse(json['orderDate']),

@@ -649,7 +649,7 @@ class PrintingService {
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8),
                           child: pw.Text(
-                            '${entry.value}"',
+                            '${entry.value}',
                             style: const pw.TextStyle(
                               fontSize: 10,
                               color: PdfColors.black,

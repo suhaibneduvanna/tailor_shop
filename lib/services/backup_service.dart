@@ -201,9 +201,9 @@ class BackupService {
           invoiceNumber: orderData['invoiceNumber'],
           customerId: orderData['customerId'],
           garmentTypeId: orderData['garmentTypeId'],
-          measurements: Map<String, double>.from(
+          measurements: Map<String, dynamic>.from(
             orderData['measurements'].map(
-              (key, value) => MapEntry(key, value.toDouble()),
+              (key, value) => MapEntry(key, value.toString()),
             ),
           ),
           quantity: orderData['quantity'],
