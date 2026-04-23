@@ -16,32 +16,20 @@ class OrdersScreen extends StatefulWidget {
 
 class _OrdersScreenState extends State<OrdersScreen> {
   final TextEditingController _searchController = TextEditingController();
-  List<Order> _filteredOrders = [];
   OrderStatus? _selectedStatus;
 
   @override
   void initState() {
     super.initState();
-    _searchController.addListener(_filterOrders);
+    _searchController.addListener(() {
+      if (mounted) setState(() {});
+    });
   }
 
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
-  }
-
-  void _filterOrders() {
-    final provider = Provider.of<TailorShopProvider>(context, listen: false);
-    setState(() {
-      _filteredOrders = provider.searchOrders(_searchController.text);
-      if (_selectedStatus != null) {
-        _filteredOrders =
-            _filteredOrders
-                .where((order) => order.status == _selectedStatus)
-                .toList();
-      }
-    });
   }
 
   @override
@@ -117,7 +105,6 @@ class _OrdersScreenState extends State<OrdersScreen> {
                     setState(() {
                       _selectedStatus = value;
                     });
-                    _filterOrders();
                   },
                 ),
               ],
@@ -126,10 +113,17 @@ class _OrdersScreenState extends State<OrdersScreen> {
           Expanded(
             child: Consumer<TailorShopProvider>(
               builder: (context, provider, child) {
-                final orders =
-                    _searchController.text.isEmpty && _selectedStatus == null
-                        ? provider.orders
-                        : _filteredOrders;
+                List<Order> orders = provider.orders;
+
+                if (_searchController.text.isNotEmpty) {
+                  orders = provider.searchOrders(_searchController.text);
+                }
+
+                if (_selectedStatus != null) {
+                  orders = orders
+                      .where((order) => order.status == _selectedStatus)
+                      .toList();
+                }
 
                 if (orders.isEmpty) {
                   return const Center(child: Text('No orders found'));

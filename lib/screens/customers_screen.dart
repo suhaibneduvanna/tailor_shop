@@ -13,25 +13,19 @@ class CustomersScreen extends StatefulWidget {
 
 class _CustomersScreenState extends State<CustomersScreen> {
   final TextEditingController _searchController = TextEditingController();
-  List<Customer> _filteredCustomers = [];
 
   @override
   void initState() {
     super.initState();
-    _searchController.addListener(_filterCustomers);
+    _searchController.addListener(() {
+      if (mounted) setState(() {});
+    });
   }
 
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
-  }
-
-  void _filterCustomers() {
-    final provider = Provider.of<TailorShopProvider>(context, listen: false);
-    setState(() {
-      _filteredCustomers = provider.searchCustomers(_searchController.text);
-    });
   }
 
   @override
@@ -86,10 +80,9 @@ class _CustomersScreenState extends State<CustomersScreen> {
           Expanded(
             child: Consumer<TailorShopProvider>(
               builder: (context, provider, child) {
-                final customers =
-                    _searchController.text.isEmpty
-                        ? provider.customers
-                        : _filteredCustomers;
+                final customers = _searchController.text.isEmpty
+                    ? provider.customers
+                    : provider.searchCustomers(_searchController.text);
 
                 if (customers.isEmpty) {
                   return const Center(child: Text('No customers found'));
