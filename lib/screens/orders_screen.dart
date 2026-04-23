@@ -125,6 +125,16 @@ class _OrdersScreenState extends State<OrdersScreen> {
                       .toList();
                 }
 
+                // Sort orders by invoice number (large to small)
+                orders.sort((a, b) {
+                  final aNum = int.tryParse(a.invoiceNumber) ?? 0;
+                  final bNum = int.tryParse(b.invoiceNumber) ?? 0;
+                  if (aNum != 0 && bNum != 0) {
+                    return bNum.compareTo(aNum);
+                  }
+                  return b.invoiceNumber.compareTo(a.invoiceNumber);
+                });
+
                 if (orders.isEmpty) {
                   return const Center(child: Text('No orders found'));
                 }
